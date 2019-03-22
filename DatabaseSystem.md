@@ -339,7 +339,11 @@ SQL语言是集DDL、DML、DCL于一体的数据库语言。
 
 - **Alter**
 
-  - alter table 表名 \[add \{(列名 数据类型 \[default \{默认值|Null\}\]\[\[, 列名 数据类型 \[default \{默认值|Null}]\] ...\][, 表约束])|constraint 约束名\}\] \[drop \{column (列名\[\[, 列名\] ...\])|constraint 约束名|Primary key\}\] \[modify 列名 数据类型 \[default \{默认值|Null\}\] \[列约束]\[\[, 列名 数据类型 \[default \{默认值|Null\}\] \[列约束\]\] ...\]\];
+  - alter table 表名 add \{(列名 数据类型 \[default \{默认值|Null\}\]\[\[, 列名 数据类型 \[default \{默认值|Null}]\] ...\][, 表约束])|constraint 约束名\};
+
+  - alter table 表名 drop \{column (列名\[\[, 列名\] ...\])|constraint 约束名|Primary key\};
+
+  - alter table 表名 modify 列名 数据类型 \[default \{默认值|Null\}\] \[列约束]\[\[, 列名 数据类型 \[default \{默认值|Null\}\] \[列约束\]\] ...\];
 
     修改指定表的定义。add用于增加列或约束，drop用于删除列或约束，modify用于修改列的定义。
 
@@ -391,7 +395,7 @@ SQL语言是集DDL、DML、DCL于一体的数据库语言。
 
 - **Update**
 
-  - update 表名 set 列名= 表达式|(子查询)\[\[, 列名= 表达式|(子查询)\] ...\] \[where 条件表达式\];
+  - update 表名 set 列名=表达式|(子查询)\[\[, 列名= 表达式|(子查询)\] ...\] \[where 条件表达式\];
 
     更新指定表中满足指定条件的元组的指定列为新的值。新值表达式中可包含属性名及数学符号。
 
