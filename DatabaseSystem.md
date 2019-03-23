@@ -573,9 +573,25 @@ SQL支持静态约束中的**域完整性约束**与**表完整性约束**（仅
 
 级别3权利称为**账户级别**权利，级别1和2称为**关系级别**权利。
 
-## 第9讲 嵌入式SQL语言之基本技巧
+## 第9-10讲 嵌入式SQL语言
 
 ### 基本概念
+
+#### 静态SQL与动态SQL
+
+静态SQL：SQL语句已在程序中写好，使用时仅需传递变量值。
+
+动态SQL：SQL语句在程序中动态构造，形成字符串，然后交由DBMS执行，执行时仍可传递变量。
+
+#### 数据字典
+
+**数据字典**：又称**系统目录**或**元数据**，是系统维护的一些表或视图的集合，其中存储了数据库中各类对象的定义信息。数据字典可使用SQL语句访问。
+
+组成：关系信息、用户账户信息（包括密码）、统计与描述性数据、物理文件组织信息、索引信息。
+
+#### SQLDA
+
+**SQLDA**：SQL描述区，内存数据结构，装载着关系模式的定义信息。不同DBMS提供的SQLDA格式并不一致。
 
 #### 事务
 
@@ -608,6 +624,19 @@ SQL支持静态约束中的**域完整性约束**与**表完整性约束**（仅
   - 断开连接：
     - disconnect 连接名;
     - disconnect current;
+
+- 执行动态SQL语句：
+
+  - 运行时编译并执行：
+
+    - execute immediate :SQL语句字符串;
+
+      立即编译执行的语句必须为完整SQL语句。
+
+  - 先编译后执行：
+
+    - 编译：prepare 语句名 from :SQL语句字符串;
+    - 执行：execute 语句名 using :宿主变量;
 
 - 提交/撤销执行：
 
@@ -696,3 +725,50 @@ SQL支持静态约束中的**域完整性约束**与**表完整性约束**（仅
     - 状态记录变量：sqlcode、sqlca.sqlcode、sqlstate
 
       不同DBMS各自支持上述变量中的一种或几种，用于记录执行SQL语句的状态。
+
+## 第10讲 数据库标准接口
+
+### ODBC
+
+**ODBC**：不同语言的应用程序与不同数据库服务器间通讯的标准。
+
+**SQLCA**：SQL通讯区，记录着SQL语句被DBMS执行后返回的状态信息。
+
+连接默认启用自动提交特性，自动提交每一条SQL语句，可手动关闭后手动提交。
+
+连接步骤：
+
+1. SQLAllocEnv()
+2. SQLAllocConnect()
+3. SQLConnect()
+4. 进行工作：
+   - 发送SQL命令：SQLExecDirect()
+   - 获取结果：SQLFetch()
+   - 绑定宿主变量与结果属性：SQLBindCol()
+5. SQLDisconnect()
+6. SQLFreeConnect()
+7. SQLFreeEnv()
+
+### JDBC
+
+**JDBC**：提供Java应用程序与数据库服务器的连接和通讯能力。
+
+常见类：
+
+- java.sql.DriverManager：处理驱动的调入，支持产生新数据库连接。
+- java.sql.Driver：通过驱动进行数据库访问。
+- java.sql.Connection：对特定数据库的连接。
+- java.sql.Statement：对特定的数据库执行的SQL语句。
+- java.sql.PreparedStatement：用于执行预编译的SQL语句。
+- java.sql.CallableStatement：用于执行对数据库内嵌过程的调用。
+- java.sql.ResultSet：从当前执行的SQL语句中返回结果数据。
+
+连接步骤：
+
+1. 传递Driver给DriverManager加载数据库驱动。
+2. 通过URL得到Connection对象，建立数据库连接。
+3. 进行工作：
+   - 使用Statement对象查询或修改数据库（查询和修改使用不同的函数）。
+   - 查询返回ResultSet对象。
+   - 使用结束后关闭Statement对象。
+4. 关闭连接。
