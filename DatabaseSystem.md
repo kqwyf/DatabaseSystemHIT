@@ -1037,3 +1037,25 @@ IDEF1X图：
 - 分解律：若$X\rightarrow Y$，$Z\subset Y$，则$X\rightarrow Z$。
 - 重要引理：$X\rightarrow A_1,A_2,\dots,A_n \Leftrightarrow X\rightarrow A_i(1\leq i \leq n)$
 
+## 第15讲 关系范式
+
+**多值依赖**：对于$X$给定值，$Y$有一组值与之对应，且该组$Y$值不与$U-X-Y$属性集中的属性产生依赖关系。记作$X\rightarrow \rightarrow Y$。其中$X$与$Y$可以相交。函数依赖是多值依赖的特例。
+
+- 互补多值依赖：指$X\rightarrow \rightarrow Y$与$X\rightarrow \rightarrow U-X-Y$这一对依赖。
+
+以下范式条件逐渐加强（上为下的必要条件）（除W4NF）。
+
+**第1范式（1NF）**：关系的每个分量都是不可分的数据项。
+
+**第2范式（2NF）**：关系满足1NF，且每一非主属性完全函数依赖于候选键。
+
+**第3范式（3NF）**：关系满足2NF，且不含传递函数依赖。
+
+**Boyce-Codd范式（BCNF）**：关系满足1NF，且每一非平凡函数依赖左端必含有候选键。
+
+- 转换为BCNF：将函数依赖左端不含候选键的依赖单独组成一个关系。
+
+**第4范式（4NF）**：关系满足1NF，且每一非平凡依赖（函数依赖、多值依赖）左端必含有候选键。
+
+- **弱第4范式（W4NF）**：关系满足3NF，且每一对互补多值依赖中必有一个为函数依赖。
+
