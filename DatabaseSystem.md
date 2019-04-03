@@ -987,3 +987,53 @@ IDEF1X图：
 - 创建索引、视图等。
 - 提交物理数据库设计报告。
 
+## 第14讲 函数依赖
+
+**函数依赖**：在某一关系模式$R(U)$中，对于属性（集）$X$和$Y$，称“$X$函数决定$Y$”或“$Y$函数依赖于$X$”，当且仅当对$R(U)$的任意关系$r$，不存在$r$中的两个元组其$X$属性值相等而$Y$属性值不等。即在该关系模式下任意可能元组中，一旦确定$X$的值即可确定$Y$的值。记作$X\rightarrow Y$。
+
+- **非平凡的函数依赖**：称$X\rightarrow Y$为非平凡的，当且仅当属性集$Y\not \subset X$。
+- 完全/部分函数依赖：
+  - **完全函数依赖**：对属性集$X$与$Y$，称$X\rightarrow Y$为完全函数依赖，当且仅当$X$的任意真子集$X'$均不满足$X'\rightarrow Y$。记作$X\xrightarrow{f}{} Y$。
+  - **部分函数依赖**：称$X\rightarrow Y$为部分函数依赖，当且仅当其不为完全函数依赖。记作$X\xrightarrow {p}{} Y$。
+- **传递函数依赖**：称$X\rightarrow Z$为传递函数依赖，当且仅当存在$Y$，使得$X\rightarrow Y$，$Y\rightarrow Z$，$Y\not \rightarrow X$，且前述3个函数依赖均为非平凡的。
+
+函数依赖也可以基于具体关系，而不基于某一关系模式。即其对于属于同一关系模式的另一关系可能不成立。
+
+**候选键**：对关系模式$R(U)$，称属性（集）$K$为候选键，当且仅当$K\xrightarrow{f}{}U$。
+
+**超键**：称$S$为超键，当且仅当存在候选键$K$，$S\supset K$。
+
+**主属性**：包含在**任一候选键**（而不一定是主键）中的属性。
+
+**外来键（外键）**：对关系模式$R$中的属性（集）$X$，称$X$为外来键，当且仅当$X$并非$R$的候选键，但却是另一关系的候选键。
+
+**逻辑蕴涵**：对函数依赖集$F​$，称$F​$逻辑蕴涵$X\rightarrow Y​$，当且仅当以形式逻辑推理的方式从$F​$中的函数依赖可推出$X\rightarrow Y​$。记作$F\models X\rightarrow Y​$。
+
+**闭包**：被$F$逻辑蕴涵的所有函数依赖构成的集合称作$F$的闭包，记作$F^+$。
+
+- **全函数依赖族（函数依赖完备集）**：称$F​$为全函数依赖族，当且仅当$F^+=F​$。
+
+**属性（集）闭包**：对于属性（集）$X$，称$\{属性Y|F\models X\rightarrow Y\}$为$X$关于$F$的属性（集）闭包，记作$X^+_F$。
+
+**覆盖**：称$F$覆盖$G$，或$G$覆盖$F$，当且仅当$F^+=G^+$。此时也称$F$和$G$是等价的。
+
+- **最小覆盖**：称$F$为最小覆盖，若
+  - $F$中每个函数依赖右部均为单个属性。
+  - 去掉$F$中任意一个函数依赖所得$F'$均不等价于$F$。
+  - 去掉$F$中任意一个函数依赖左端部分属性所得$F'$均不等价于$F​$。
+
+### Armstrong公理
+
+设$R(U,F)$为属性集$U=\{A_1,A_2,\dots,A_n\}$上的一个关系模式，具有函数依赖$F$。则有如下公理：
+
+- A1（自反律）：若$Y\subset X\subset U$，则$F\models X\rightarrow Y$。
+- A2（增广律）：若$X\rightarrow Y\in F​$，$Z\subset U​$，则$F\models XZ\rightarrow YZ​$。
+- A3（传递律）：若$X\rightarrow Y\in F$，$Y\rightarrow Z$，则$F\models X\rightarrow Z$。
+
+#### 推论
+
+- 合并律：若$X\rightarrow Y$，$X\rightarrow Z$，则$X\rightarrow YZ$。
+- 伪传递律：若$X\rightarrow Y$且$WY\rightarrow Z$，则$XW\rightarrow Z$。
+- 分解律：若$X\rightarrow Y$，$Z\subset Y$，则$X\rightarrow Z$。
+- 重要引理：$X\rightarrow A_1,A_2,\dots,A_n \Leftrightarrow X\rightarrow A_i(1\leq i \leq n)$
+
