@@ -235,7 +235,7 @@ DBMS通常允许**用户自定义三级模式**，而通过**程序自动实现�
     - 书写条件时，元组$t$的分量$A_i$记为$t[A_i]$，或简写为$A_i$。
   - **连接**：
 
-    - **$\theta$-连接（$\mathop \Join \limits_{A \space\theta\space B}$）**：$R \mathop \Join \limits_{A \space\theta\space B} S=\sigma_{t[A]\space\theta\space s[B]}(R \times S)$，其中$\theta$为比较运算符，$t \in R$，$s \in S$。
+    - **$\theta​$-连接（$\mathop \Join \limits_{A \space\theta\space B}​$）**：$R \mathop \Join \limits_{A \space\theta\space B} S=\sigma_{t[A]\space\theta\space s[B]}(R \times S)​$，其中$\theta​$为比较运算符，$t \in R​$，$s \in S​$。
       - 一个关系与自身连接时应进行换名，例如$\rho_{S}R$表示将集合$R$换名为$S$。
     - **等值连接**：即特殊的$\theta$-连接，其中$\theta$为$=$。
     - **自然连接（$\Join$）**：$R \Join S=\sigma_{t[B]=s[B]}(R \times S)$，要求$R$与$S$中有若干个相同的属性（组）$B$。
@@ -1039,7 +1039,7 @@ IDEF1X图：
 
 ## 第15讲 关系范式
 
-**多值依赖**：对于$X$给定值，$Y$有一组值与之对应，且该组$Y$值不与$U-X-Y$属性集中的属性产生依赖关系。记作$X\rightarrow \rightarrow Y$。其中$X$与$Y$可以相交。函数依赖是多值依赖的特例。
+**多值依赖**：对于$X$给定值，$Y$有一组值与之对应，且在确定该$X$值时，对该组$Y$值中的任一个值，与其对应的元组集在$U-X-Y$上的投影均相同。记作$X\rightarrow \rightarrow Y$。其中$X$与$Y$可以相交。函数依赖是多值依赖的特例。
 
 - 互补多值依赖：指$X\rightarrow \rightarrow Y$与$X\rightarrow \rightarrow U-X-Y$这一对依赖。
 
@@ -1058,4 +1058,72 @@ IDEF1X图：
 **第4范式（4NF）**：关系满足1NF，且每一非平凡依赖（函数依赖、多值依赖）左端必含有候选键。
 
 - **弱第4范式（W4NF）**：关系满足3NF，且每一对互补多值依赖中必有一个为函数依赖。
+
+通常的数据库设计满足BCNF即可。
+
+## 第16讲 模式分解
+
+**模式分解**：关系模式$R(U)$的分解指使用一组新的关系模式$\rho=\{R_1(U_1),R_2(U_2),\dots,R_k(U_k)\}$代替之。其中$U=\bigcup_{i=1}^kU_i$，且$\forall i\neq j,U_i\not \subset U_j$。此时为简便起见，可使用$R_i$指代$R_i(U_i)$。
+
+**投影连接**：对关系模式$R$的关系$r$，定义其向$\rho$的投影连接为$m_\rho(r)=\mathop \Join_{i=1}^k\pi_{R_{i}}(r)$。其具有性质：
+
+- $r\subset m_\rho(r)$
+- $\pi_{R_i}(m_\rho(r))=\pi_{R_i}(r)$
+- $m_\rho(m_\rho(r))=m_\rho(r)$
+
+### 模式分解类别
+
+- **无损连接分解**：对关系模式$R(U,F)$，称$\rho$为$R$相对于$F$的一个无损连接分解，当且仅当对任意满足$F$的$r$，$m_\rho(r)= r$。
+
+  - 检验算法：
+
+    - 一般情形：
+
+      1. 构造$R_\rho$矩阵：第$i$行行标$R_i$，第$j$列列标$A_j$。
+         $$
+         R_\rho[i,j]=
+         \left\{
+         \begin{array}{lr}
+         	a_j,&A_j\in R_i\\
+         	b_{ij},&A_j\notin R_i
+         \end{array}
+         \right.
+         $$
+
+      2. 反复执行本步，直至$R_\rho$无法被修改：任取一函数依赖$X\rightarrow Y$（不失一般性，设$Y$为单列），选出$X$中各列内容对应相同的行集$L$（即$\forall x\in X,\forall l_1,l_2\in L,l_1[x]=l_2[x]$），若$\exists l\in L,\exists j,l[Y]=a_j$，则修改$L$中所有行的$Y$列为上述$a_j$。
+
+      3. 若$R_\rho$中有一行的所有元素均出现$a$，则该分解为无损连接分解；否则为有损连接分解。
+
+    - 二元分解情形：设$\rho=\{R_1,R_2\}$，则其为无损连接分解当且仅当$R_1\cap R_2\rightarrow R_1-R_2$或$R_1\cap R_2\rightarrow R_2-R_1$。
+
+  - 性质：
+
+    - 将无损连接分解中的某一子模式继续进行无损连接分解，则整体仍是无损连接分解。
+    - 向无损连接分解中加入子模式，则整体仍是无损连接分解。
+
+- **保持依赖分解**：对关系模式$R(U,F)$，称$\rho$为$R$相对于$F$的一个保持依赖分解，当且仅当$\forall f\in F,(\mathop \bigcup_{i=1}^k \pi_{R_i}(F))\models f$，其中$\pi_{R_i}(F)=\{X\rightarrow Y\in F|X,Y\in R_i\}$。
+
+  - 检验算法：
+    - 一般情形：
+      1. 反复执行本步，遍历$F$中所有函数依赖$X\rightarrow Y$：求属性闭包$X^+_G$，若$Y \notin X^+_G$则该分解不为保持依赖分解。
+      2. 若上一步中未发现不满足条件者，则该分解为保持依赖分解。
+
+无损连接分解与保持依赖分解**互不为**充分条件。
+
+### 模式分解算法
+
+- 无损连接地分解为BCNF或4NF：
+  1. 反复执行本步，直至所有子模式均满足BCNF或4NF：寻找一不满足BCNF或4NF的子模式$s$，其中必存在$X\rightarrow A$且$X$并非超键。此时将$s$分解为$s_1(X,A)$及$s_2(s-\{A\})$。
+- 保持依赖地分解为3NF：
+  1. 将不存在于函数依赖中的属性单独组成一模式。
+  2. 反复执行本步，直至不存在$X$使得$\{X\rightarrow A_1,X\rightarrow A_2,\dots,X\rightarrow A_m\}\subset F$：将子模式$s(X,A_1,A_2,\dots,A_m)$加入子模式集，同时从$F$中删去上述函数依赖。
+- 无损连接且保持依赖地分解为3NF：
+  1. 保持依赖地分解为3NF，得分解$\sigma$。
+  2. 若分解中有一关系包含候选键$X$，则$\sigma$即为所求；否则$\sigma\cup\{X\}$即为所求。
+
+### 连接依赖与第五范式
+
+**连接依赖**：对关系模式$R$，其上分解$\rho=\{R_1,R_2,\dots,R_n\}$，若对$R$上任意关系$r$均有$r=m_\rho(r)$，则称$R$的属性集满足连接依赖，记作${\rm JD}[R_1,\dots,R_n]$。多值依赖是连接依赖的特例。
+
+**第5范式（5NF）**：关系的每个连接依赖均按其候选键进行连接运算。5NF$\subset$4NF。
 
